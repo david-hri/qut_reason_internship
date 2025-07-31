@@ -1,0 +1,4 @@
+is(user, full_time_employee)
+has(user, employment_duration_ge_13)
+has(user, employment_duration_le_60)
+works(user, hours_ge_30)
