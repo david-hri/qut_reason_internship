@@ -1,0 +1,50 @@
+contract_length_allowed(X, 5) :- is(X, qualifying_veteran_free_agent).
+contract_length_allowed(X, 4) :- not(is(X, qualifying_veteran_free_agent)).
+contract_length_allowed(X, 2) :- used_exception(X, bi_annual).
+contract_length_allowed(X, 4) :- used_exception(X, mid_level_non_taxpayer).
+contract_length_allowed(X, 2) :- used_exception(X, mid_level_taxpayer).
+contract_length_allowed(X, 3) :- used_exception(X, mid_level_room_team).
+contract_length_allowed(X, 2) :- used_exception(X, minimum_salary).
+not(allowed_contract(X)) :- exceeds(X, salary_cap), not(has(X, exception)).
+max_salary(X, level_1) :- has(X, years_of_service_lt_7).
+max_salary(X, level_2) :- has(X, years_of_service_ge_7), has(X, years_of_service_le_9).
+max_salary(X, level_3) :- has(X, years_of_service_ge_10).
+max_salary(X, level_4) :- is(X, eligible_fifth_year), meets(X, higher_max_criteria).
+salary_change_allowed(X, standard_ratio) :- 
+not(is(X, qualifying_veteran_free_agent)), 
+not(is(X, early_qualifying_veteran_free_agent)).
+salary_change_allowed(X, special_ratio) :- is(X, qualifying_veteran_free_agent).
+salary_change_allowed(X, special_ratio) :- is(X, early_qualifying_veteran_free_agent).
+salary_variation_limit(player, standard) :- not qualifying_veteran_free_agent(player).
+salary_variation_limit(player, extended) :- qualifying_veteran_free_agent(player).
+may_defer_compensation(player) :- age(player) >= 38.
+may_defer_compensation(player) :- qualifying_veteran_free_agent(player), age(player) >= 38
+triggers_hard_cap(bi_annual_exception, first_apron_level).
+triggers_hard_cap(non_taxpayer_mid_level_exception, first_apron_level).
+triggers_hard_cap(sign_and_trade, first_apron_level).
+triggers_hard_cap(expanded_traded_player_exception, first_apron_level).
+triggers_hard_cap(aggregated_traded_player_exception, second_apron_level).
+triggers_hard_cap(cash_in_trade, second_apron_level).
+triggers_hard_cap(sign_and_trade_assignee_exception, second_apron_level).
+triggers_hard_cap(taxpayer_mid_level_exception, second_apron_level).
+reduced_exception(traded_player_exception, 250k, first_apron_level).
+has_exception(player, qualifying_veteran_free_agent).
+has_exception(player, early_qualifying_veteran_free_agent).
+has_exception(player, non_qualifying_veteran_free_agent).
+consumes_salary_cap(player, qualifying_veteran_free_agent).
+consumes_salary_cap(player, early_qualifying_veteran_free_agent).
+consumes_salary_cap(player, non_qualifying_veteran_free_agent).
+consumes_salary_cap(player, standard_traded_player_exception).
+not_allowed(trade, player) :- contract_signed(player, rookie), days_since_signing(player) < 30.
+not_allowed(trade, player) :- contract_signed(player, free_agent), days_since_signing(player) < 90.
+not_allowed(trade, player) :- contract_signed(player, qualifying_veteran_free_agent), days_since_signing(player) < 90.
+sign_and_trade_contract_length_range(3, 4).
+sign_and_trade_requires(no_mid_level_exception).
+sign_and_trade_max_25_percent_increase(player) :- eligible_fifth_year(player).
+sign_and_trade_needs_room(assigning_team).
+sign_and_trade_half_salary_rule(player) :- qualifying_free_agent(player).
+offer_sheet_max(player, mid_level) :- years_service(player) =< 2.
+offer_sheet_3rd_year_allowed(player) :- offer_sheet_max(player, mid_level).
+offer_sheet_4th_year_allowed(player) :- offer_sheet_3rd_year(player).
+offer_sheet_average_above_mid_level(player) :- years_service(player) =< 2.
+not_allowed(consecutive_first_round_trade).
